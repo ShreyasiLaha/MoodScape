@@ -1,10 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
 import logoIcon from '../logo_icon.png';
-import { places as fallbackPlaces } from '../data/places';
-=======
->>>>>>> 30ab4b1908a40c7860f7486d9303dd6913b37a52
 import { fetchNearbyPlaces } from '../services/overpassApi';
 import L from 'leaflet';
 
@@ -201,7 +197,6 @@ export default function ResultsPage({
           >
             ⬅️ Back
           </button>
-<<<<<<< HEAD
           <div className="flex items-center gap-2.5">
             <img src={logoIcon} alt="MoodScape Logo" className="h-[24px] w-[24px] object-contain hidden sm:inline" />
             <span 
@@ -211,11 +206,6 @@ export default function ResultsPage({
               MoodScape
             </span>
           </div>
-=======
-          <span className="font-heading font-extrabold text-base hidden sm:inline text-primary-green">
-            Hidden Places
-          </span>
->>>>>>> 30ab4b1908a40c7860f7486d9303dd6913b37a52
         </div>
 
         <div className="flex-1 max-w-xs mx-4">
