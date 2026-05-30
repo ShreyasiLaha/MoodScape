@@ -4,27 +4,29 @@ export default function LocationPicker({ userLocation, setUserLocation }) {
   const [isLocating, setIsLocating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // West Bengal approximate bounding box
-  const isWithinWB = (lat, lng) => {
-    return lat >= 21.5 && lat <= 27.5 && lng >= 85.8 && lng <= 89.9;
-  };
-
   const handleGetCurrentLocation = () => {
     setIsLocating(true);
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          if (isWithinWB(latitude, longitude)) {
-            setUserLocation({
-              lat: latitude,
-              lng: longitude,
-              name: "Current Location"
-            });
-          } else {
-            alert("Your current location is outside West Bengal. Please search for a place within WB.");
-          }
-          setIsLocating(false);
+          // Try to reverse-geocode to a human readable name
+          (async () => {
+            try {
+              const revRes = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`,
+                { headers: { 'Accept': 'application/json' } }
+              );
+              const revJson = await revRes.json();
+              const display = revJson && revJson.display_name ? revJson.display_name.split(',')[0] : 'Current Location';
+              setUserLocation({ lat: latitude, lng: longitude, name: display });
+            } catch (err) {
+              console.warn('Reverse geocoding failed, using coordinates only', err);
+              setUserLocation({ lat: latitude, lng: longitude, name: 'Current Location' });
+            } finally {
+              setIsLocating(false);
+            }
+          })();
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -43,20 +45,15 @@ export default function LocationPicker({ userLocation, setUserLocation }) {
     if (!searchQuery.trim()) return;
     
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery + ', West Bengal')}`);
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`);
       const data = await response.json();
       
       if (data && data.length > 0) {
         const lat = parseFloat(data[0].lat);
         const lng = parseFloat(data[0].lon);
-        
-        if (isWithinWB(lat, lng)) {
-          setUserLocation({ lat, lng, name: data[0].display_name.split(',')[0] });
-        } else {
-          alert("The location found is outside West Bengal. Please try again.");
-        }
+        setUserLocation({ lat, lng, name: data[0].display_name.split(',')[0] });
       } else {
-        alert("Location not found. Please try another place in West Bengal.");
+        alert("Location not found. Please try another place.");
       }
     } catch (error) {
       console.error("Geocoding error:", error);
@@ -87,7 +84,7 @@ export default function LocationPicker({ userLocation, setUserLocation }) {
         <form onSubmit={handleSearchLocation} className="flex gap-2">
           <input 
             type="text" 
-            placeholder="Search city in West Bengal..." 
+            placeholder="Search city or place..." 
             className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary-green"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

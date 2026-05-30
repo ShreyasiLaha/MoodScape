@@ -1,0 +1,27 @@
+# Node
+node_modules/
+dist/
+
+# Vite
+/.vite/
+
+# Build outputs
+/build/
+/moodscape_app/build/
+
+# Flutter
+.dart_tool/
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+**/flutter_export_environment.sh
+
+# Android
+/android/.gradle/
+**/build/
+
+# IDE
+.idea/
+.vscode/
+
+# macOS
+.DS_Store

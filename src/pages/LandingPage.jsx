@@ -48,6 +48,7 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
 
       {/* Transparent Navbar */}
       <header className="absolute top-0 left-0 w-full h-16 px-6 flex justify-between items-center z-30 bg-transparent">
+<<<<<<< HEAD
         <div className="flex items-center gap-3">
           <img src={logoIcon} alt="MoodScape Logo" className="h-[32px] w-[32px] object-contain" />
           <span 
@@ -55,6 +56,12 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
             MoodScape
+=======
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">🌿</span>
+          <span className="font-heading text-lg font-bold text-white tracking-tight">
+            Hidden Places
+>>>>>>> 30ab4b1908a40c7860f7486d9303dd6913b37a52
           </span>
         </div>
         
@@ -92,6 +99,7 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
       {/* Centered Main Brand Content */}
       <main className="absolute inset-0 flex flex-col justify-center items-center text-center z-20 px-4 pb-[8vh]">
         
+<<<<<<< HEAD
         <div className={`transition-all duration-[1200ms] ease-out transform ${animate ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.98]'}`}>
           <span className="text-5xl block mb-6">🌿</span>
           <h1 
@@ -105,6 +113,12 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
             }}
           >
             MoodScape
+=======
+        <div className={`transition-all duration-1000 transform ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <span className="text-5xl block mb-4">🌿</span>
+          <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
+            Hidden Places
+>>>>>>> 30ab4b1908a40c7860f7486d9303dd6913b37a52
           </h1>
         </div>
 

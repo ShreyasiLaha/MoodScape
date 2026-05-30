@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import logoIcon from '../logo_icon.png';
 import { places as fallbackPlaces } from '../data/places';
+=======
+>>>>>>> 30ab4b1908a40c7860f7486d9303dd6913b37a52
 import { fetchNearbyPlaces } from '../services/overpassApi';
 import L from 'leaflet';
 
@@ -43,8 +46,8 @@ export default function ResultsPage({
       if (results.length > 0) {
         setFilteredPlaces(results);
       } else {
-        // Fallback to static if OSM returns nothing
-        setFilteredPlaces(fallbackPlaces.slice(0, 5));
+        // No dynamic results — show empty list so UI displays the 'no spots' state
+        setFilteredPlaces([]);
       }
       setIsFetching(false);
     };
@@ -58,7 +61,7 @@ export default function ResultsPage({
     if (typeof window !== 'undefined' && !mapRef.current) {
       const mapInstance = L.map('results-map', {
         zoomControl: true
-      }).setView([22.9868, 87.8550], 7);
+      }).setView([20.0, 0.0], 2);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -198,6 +201,7 @@ export default function ResultsPage({
           >
             ⬅️ Back
           </button>
+<<<<<<< HEAD
           <div className="flex items-center gap-2.5">
             <img src={logoIcon} alt="MoodScape Logo" className="h-[24px] w-[24px] object-contain hidden sm:inline" />
             <span 
@@ -207,6 +211,11 @@ export default function ResultsPage({
               MoodScape
             </span>
           </div>
+=======
+          <span className="font-heading font-extrabold text-base hidden sm:inline text-primary-green">
+            Hidden Places
+          </span>
+>>>>>>> 30ab4b1908a40c7860f7486d9303dd6913b37a52
         </div>
 
         <div className="flex-1 max-w-xs mx-4">

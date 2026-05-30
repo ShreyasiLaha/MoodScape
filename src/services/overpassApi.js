@@ -57,8 +57,12 @@ export const fetchNearbyPlaces = async (lat, lng, radius = 3000, category = 'all
       .map(element => {
         const pLat = element.lat || element.center?.lat;
         const pLon = element.lon || element.center?.lon;
-        const address = [element.tags['addr:street'], element.tags['addr:city']]
-          .filter(Boolean).join(', ') || 'West Bengal, India';
+        const address = [
+          element.tags['addr:street'],
+          element.tags['addr:city'],
+          element.tags['addr:state'],
+          element.tags['addr:country']
+        ].filter(Boolean).join(', ') || 'Unknown location';
 
         return {
           id: element.id.toString(),
@@ -71,6 +75,8 @@ export const fetchNearbyPlaces = async (lat, lng, radius = 3000, category = 'all
           safetyRating: (Math.random() * (5.0 - 3.5) + 3.5).toFixed(1),
           safetyBadges: ['Public Area'],
           moods: [category],
+          times: ['Afternoon'],
+          companions: ['Solo'],
           image: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Default fallback
           tips: ['Always check hours before visiting.', 'Great local spot!']
         };
