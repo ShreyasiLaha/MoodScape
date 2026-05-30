@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logoIcon from '../logo_icon.png';
 import { places as fallbackPlaces } from '../data/places';
 import { fetchNearbyPlaces } from '../services/overpassApi';
 import L from 'leaflet';
@@ -197,9 +198,15 @@ export default function ResultsPage({
           >
             ⬅️ Back
           </button>
-          <span className="font-heading font-extrabold text-base hidden sm:inline text-primary-green">
-            Hidden West Bengal
-          </span>
+          <div className="flex items-center gap-2.5">
+            <img src={logoIcon} alt="MoodScape Logo" className="h-[24px] w-[24px] object-contain hidden sm:inline" />
+            <span 
+              className="font-extrabold text-base hidden sm:inline text-primary-green tracking-wide"
+              style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            >
+              MoodScape
+            </span>
+          </div>
         </div>
 
         <div className="flex-1 max-w-xs mx-4">

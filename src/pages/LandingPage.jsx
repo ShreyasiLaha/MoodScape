@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logoIcon from '../logo_icon.png';
 
 export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback, favoritesCount }) {
   const navigate = useNavigate();
@@ -34,15 +35,26 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
         />
       </video>
 
-      {/* Dark overlay for readability */}
-      <div className="absolute inset-0 bg-black/45 z-10"></div>
+      {/* Cinematic atmospheric fog & gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/25 to-black/35 z-10"></div>
+      
+      {/* Soft light leak/fog glow overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-10 opacity-[0.22] mix-blend-screen"
+        style={{
+          background: "radial-gradient(circle at 50% 60%, rgba(82, 183, 136, 0.15), transparent 75%)"
+        }}
+      ></div>
 
       {/* Transparent Navbar */}
       <header className="absolute top-0 left-0 w-full h-16 px-6 flex justify-between items-center z-30 bg-transparent">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🌿</span>
-          <span className="font-heading text-lg font-bold text-white tracking-tight">
-            Hidden West Bengal
+        <div className="flex items-center gap-3">
+          <img src={logoIcon} alt="MoodScape Logo" className="h-[32px] w-[32px] object-contain" />
+          <span 
+            className="text-[1.05rem] font-bold text-white tracking-wide" 
+            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+          >
+            MoodScape
           </span>
         </div>
         
@@ -78,25 +90,34 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
       </header>
 
       {/* Centered Main Brand Content */}
-      <main className="absolute inset-0 flex flex-col justify-center items-center text-center z-20 px-4">
+      <main className="absolute inset-0 flex flex-col justify-center items-center text-center z-20 px-4 pb-[8vh]">
         
-        <div className={`transition-all duration-1000 transform ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <span className="text-5xl block mb-4">🌿</span>
-          <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
-            Hidden West Bengal
+        <div className={`transition-all duration-[1200ms] ease-out transform ${animate ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.98]'}`}>
+          <span className="text-5xl block mb-6">🌿</span>
+          <h1 
+            className="font-medium text-white/90"
+            style={{ 
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "clamp(2.5rem, 4.5vw, 4.5rem)",
+              textShadow: "0 2px 12px rgba(0,0,0,0.18)",
+              letterSpacing: "0.06em",
+              lineHeight: "1.2"
+            }}
+          >
+            MoodScape
           </h1>
         </div>
 
-        <div className={`mt-3 transition-all duration-1000 delay-300 transform ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <p className="text-base sm:text-lg text-white/95 font-light leading-relaxed max-w-sm drop-shadow-sm">
+        <div className={`mt-8 transition-all duration-[1200ms] delay-200 ease-out transform ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          <p className="text-base sm:text-lg text-white/90 font-light leading-relaxed max-w-sm drop-shadow-sm">
             Discover secret places. Feel the city differently.
           </p>
         </div>
 
-        <div className={`mt-8 transition-all duration-1000 delay-500 transform ${animate ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+        <div className={`mt-12 transition-all duration-[1200ms] delay-400 ease-out transform ${animate ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
           <button 
             onClick={() => navigate('/selector')}
-            className="bg-primary-green hover:bg-primary-green/90 text-white font-heading text-base font-bold py-3.5 px-8 rounded-full shadow-lg hover:shadow-primary-green/20 hover:scale-105 active:scale-95 transition-all duration-300"
+            className="bg-primary-green hover:bg-primary-green/95 text-white font-heading text-base font-bold py-4 px-10 rounded-full shadow-lg hover:shadow-[0_0_18px_rgba(45,106,79,0.3)] hover:scale-[1.03] active:scale-95 transition-all duration-500 ease-out"
           >
             Explore Now ➔
           </button>
