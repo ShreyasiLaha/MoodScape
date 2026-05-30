@@ -77,7 +77,6 @@ export const fetchNearbyPlaces = async (lat, lng, radius = 3000, category = 'all
           moods: [category],
           times: ['Afternoon'],
           companions: ['Solo'],
-          image: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Default fallback
           tips: ['Always check hours before visiting.', 'Great local spot!']
         };
       })

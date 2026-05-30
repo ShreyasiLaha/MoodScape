@@ -180,6 +180,91 @@ export default function ResultsPage({
     return list[moodName] || '📍';
   };
 
+  const hashString = (value) => {
+    let hash = 0;
+    for (let i = 0; i < value.length; i++) {
+      hash = value.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash);
+  };
+
+  const getPlaceTheme = (place) => {
+    const textToSearch = `${place.category || ''} ${place.name || ''} ${place.description || ''} ${(place.times || []).join(' ')}`.toLowerCase();
+    const themes = [
+      {
+        key: 'restaurant',
+        match: /restaurant|dining|eatery|hotel|bar|food court|bistro|kitchen/,
+        variants: ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80']
+      },
+      {
+        key: 'mountain',
+        match: /mountain|hill|peak|valley|ridge|tea\s?garden|himalaya|trek|viewpoint/,
+        variants: ['https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80']
+      },
+      {
+        key: 'forest',
+        match: /forest|jungle|wood|tree|wildlife|nature reserve|greenery|trail/,
+        variants: ['https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80']
+      },
+      {
+        key: 'cafe',
+        match: /cafe|coffee|tea|bistro|restaurant|bakery|coffee shop/,
+        variants: ['https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80']
+      },
+      {
+        key: 'beach',
+        match: /beach|sea|coast|shore|seaside|coastal|sand|ocean/,
+        variants: ['https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80']
+      },
+      {
+        key: 'park',
+        match: /park|garden|maidan|playground|lawn|open space/,
+        variants: ['https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&q=80']
+      },
+      {
+        key: 'library',
+        match: /library|book|reading|study|college|archive/,
+        variants: ['https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&q=80']
+      },
+      {
+        key: 'heritage',
+        match: /heritage|history|old|monument|temple|palace|architecture|street|market|lane/,
+        variants: ['https://images.unsplash.com/photo-1518998053401-b883c52e4d0c?w=800&q=80']
+      },
+      {
+        key: 'water',
+        match: /river|lake|water|ghat|shore|waterfront|canal|lakeside|riverside/,
+        variants: ['https://images.unsplash.com/photo-1503756234508-e32369269deb?w=800&q=80']
+      }
+    ];
+
+    return themes.find(({ match }) => match.test(textToSearch)) || {
+      key: 'landscape',
+      variants: ['https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80']
+    };
+  };
+
+  const getPlaceArtwork = (place) => {
+    const theme = getPlaceTheme(place);
+    const seedSource = place.id ? place.id.toString() : `${place.name || 'place'}-${place.category || ''}`;
+    const seed = hashString(seedSource);
+    const variantIndex = seed % theme.variants.length;
+    const variant = theme.variants[variantIndex];
+    
+    // Check if the variant is already an external HTTP URL
+    if (variant.startsWith('http')) {
+      return variant;
+    }
+    return `/place-artworks/${variant}`;
+  };
+
+  const getPlaceImage = (place) => {
+    if (place.image && !place.image.includes('placeholder.com') && !place.image.includes('via.placeholder')) {
+      return place.image;
+    }
+    return getPlaceArtwork(place);
+  };
+
   const getEmojiForCompanion = (comp) => {
     const list = { Solo: '🧍', Duet: '👫', Friends: '👥', Family: '👨‍👩‍👧' };
     return list[comp] || '👥';
@@ -280,7 +365,7 @@ export default function ResultsPage({
                   >
                     <div 
                       className="h-32 bg-cover bg-center relative"
-                      style={{ backgroundImage: `url('${place.image}')` }}
+                      style={{ backgroundImage: `url('${getPlaceImage(place)}')` }}
                     >
                       <span className="absolute top-2 left-2 bg-black/70 backdrop-blur-xs text-white text-[9px] font-bold py-1 px-2.5 rounded-full uppercase tracking-wider">
                         {place.category}
@@ -355,7 +440,7 @@ export default function ResultsPage({
               {/* Image Header with close overlay */}
               <div 
                 className="h-52 bg-cover bg-center relative flex-shrink-0"
-                style={{ backgroundImage: `url('${selectedPlace.image}')` }}
+                style={{ backgroundImage: `url('${getPlaceImage(selectedPlace)}')` }}
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 z-0"></div>
                 <button 

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8e8d7"/>
+      <stop offset="55%" stop-color="#d4a37d"/>
+      <stop offset="100%" stop-color="#7b4f31"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#fff7db" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#fff7db" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="16"/></filter>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="630" cy="110" r="70" fill="#ffe7a7" opacity="0.8"/>
+  <circle cx="635" cy="110" r="115" fill="url(#glow)"/>
+  <rect x="70" y="145" width="660" height="280" rx="42" fill="#fff5ea" opacity="0.18"/>
+  <rect x="120" y="185" width="560" height="160" rx="34" fill="#f9e6d3" opacity="0.55"/>
+  <path d="M170 330 h160 a28 28 0 0 0 28 -28 v-68 h-216 v68 a28 28 0 0 0 28 28z" fill="#8b5f44"/>
+  <path d="M455 318 h110 a28 28 0 0 0 28 -28 v-48 h-166 v48 a28 28 0 0 0 28 28z" fill="#c68a5c"/>
+  <rect x="245" y="250" width="92" height="48" rx="14" fill="#fff3c5" opacity="0.82"/>
+  <rect x="357" y="250" width="92" height="48" rx="14" fill="#fff3c5" opacity="0.82"/>
+  <rect x="468" y="250" width="92" height="48" rx="14" fill="#fff3c5" opacity="0.82"/>
+  <rect x="0" y="430" width="800" height="170" fill="#6b402a" opacity="0.24"/>
+  <path d="M90 462 C210 430, 340 430, 460 462 C580 494, 690 492, 800 454" stroke="#fff1d7" stroke-width="10" opacity="0.42" fill="none"/>
+  <ellipse cx="205" cy="462" rx="76" ry="26" fill="#ffffff" opacity="0.10" filter="url(#blur)"/>
+  <ellipse cx="590" cy="466" rx="86" ry="28" fill="#ffffff" opacity="0.08" filter="url(#blur)"/>
+</svg>

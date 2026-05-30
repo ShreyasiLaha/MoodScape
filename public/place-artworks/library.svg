@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f1ece4"/>
+      <stop offset="55%" stop-color="#c3ab8d"/>
+      <stop offset="100%" stop-color="#735b46"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="25%" r="60%">
+      <stop offset="0%" stop-color="#fff3d1" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#fff3d1" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="640" cy="118" r="72" fill="#fff0c4" opacity="0.72"/>
+  <circle cx="640" cy="118" r="145" fill="url(#glow)"/>
+  <rect x="112" y="132" width="576" height="314" rx="36" fill="#fefbf6" opacity="0.20"/>
+  <rect x="162" y="184" width="476" height="36" rx="10" fill="#705946" opacity="0.92"/>
+  <rect x="162" y="238" width="476" height="36" rx="10" fill="#b09476" opacity="0.92"/>
+  <rect x="162" y="292" width="476" height="36" rx="10" fill="#705946" opacity="0.92"/>
+  <rect x="162" y="346" width="476" height="36" rx="10" fill="#b09476" opacity="0.92"/>
+  <rect x="205" y="176" width="56" height="220" rx="14" fill="#ffffff" opacity="0.14"/>
+  <rect x="539" y="176" width="56" height="220" rx="14" fill="#ffffff" opacity="0.14"/>
+  <path d="M250 214 h28 v28 h-28z M304 214 h28 v28 h-28z M358 214 h28 v28 h-28z M412 214 h28 v28 h-28z M466 214 h28 v28 h-28z" fill="#f6e6c7" opacity="0.86"/>
+  <path d="M250 268 h28 v28 h-28z M304 268 h28 v28 h-28z M358 268 h28 v28 h-28z M412 268 h28 v28 h-28z M466 268 h28 v28 h-28z" fill="#f6e6c7" opacity="0.86"/>
+  <path d="M250 322 h28 v28 h-28z M304 322 h28 v28 h-28z M358 322 h28 v28 h-28z M412 322 h28 v28 h-28z M466 322 h28 v28 h-28z" fill="#f6e6c7" opacity="0.86"/>
+</svg>
