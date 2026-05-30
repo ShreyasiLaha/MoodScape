@@ -42,7 +42,7 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
         <div className="flex items-center gap-2">
           <span className="text-2xl">🌿</span>
           <span className="font-heading text-lg font-bold text-white tracking-tight">
-            Hidden West Bengal
+            Hidden Places
           </span>
         </div>
         
@@ -83,7 +83,7 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
         <div className={`transition-all duration-1000 transform ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <span className="text-5xl block mb-4">🌿</span>
           <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
-            Hidden West Bengal
+            Hidden Places
           </h1>
         </div>
 

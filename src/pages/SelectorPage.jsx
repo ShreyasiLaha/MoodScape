@@ -180,6 +180,11 @@ export default function SelectorPage({
         {/* Sticky footer tags + find CTA */}
         <div className="absolute bottom-0 left-0 w-full bg-card border-t border-border p-5 z-20 shadow-md">
           <div className="flex flex-wrap gap-1.5 min-height-[28px] mb-3">
+            {userLocation && (
+              <span className="bg-primary-green text-white text-[10px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 animate-fade-in-load">
+                📍 {userLocation.name}
+              </span>
+            )}
             {selectedMood && (
               <span className="bg-primary-green text-white text-[10px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 animate-fade-in-load">
                 {moods.find(m => m.name === selectedMood)?.icon} {selectedMood}
@@ -225,7 +230,7 @@ export default function SelectorPage({
               Discover Hidden Places
             </h3>
             <p className="text-xs text-text-secondary mt-1.5 leading-relaxed">
-              Make your selections on the left panel to unlock custom recommendations mapped across West Bengal.
+                Make your selections on the left panel to unlock custom recommendations mapped around your location.
             </p>
           </div>
         </div>

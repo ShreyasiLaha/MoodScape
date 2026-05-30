@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { places as fallbackPlaces } from '../data/places';
 import { fetchNearbyPlaces } from '../services/overpassApi';
 import L from 'leaflet';
 
@@ -42,8 +41,8 @@ export default function ResultsPage({
       if (results.length > 0) {
         setFilteredPlaces(results);
       } else {
-        // Fallback to static if OSM returns nothing
-        setFilteredPlaces(fallbackPlaces.slice(0, 5));
+        // No dynamic results — show empty list so UI displays the 'no spots' state
+        setFilteredPlaces([]);
       }
       setIsFetching(false);
     };
@@ -57,7 +56,7 @@ export default function ResultsPage({
     if (typeof window !== 'undefined' && !mapRef.current) {
       const mapInstance = L.map('results-map', {
         zoomControl: true
-      }).setView([22.9868, 87.8550], 7);
+      }).setView([20.0, 0.0], 2);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -198,7 +197,7 @@ export default function ResultsPage({
             ⬅️ Back
           </button>
           <span className="font-heading font-extrabold text-base hidden sm:inline text-primary-green">
-            Hidden West Bengal
+            Hidden Places
           </span>
         </div>
 
