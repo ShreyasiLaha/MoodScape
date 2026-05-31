@@ -3,6 +3,27 @@ import { useNavigate } from 'react-router-dom';
 import logoIcon from '../logo_icon.png';
 import { fetchNearbyPlaces } from '../services/overpassApi';
 import L from 'leaflet';
+import { toast } from 'sonner';
+
+const sponsoredPlace = {
+  id: "sponsored-moonbean",
+  name: "MoonBean Café",
+  category: "Relaxing Workspace",
+  description: "A peaceful workspace recommended partner place.",
+  address: "Sector V, Salt Lake, Kolkata",
+  lat: 22.5735,
+  lng: 88.4330,
+  safetyRating: "4.9",
+  distance: "0.4 km away",
+  times: ["Morning", "Afternoon", "Evening"],
+  companions: ["Solo", "Duet", "Friends"],
+  tips: [
+    "High-speed Wi-Fi and quiet ergonomic work cabins.",
+    "Complimentary botanical green tea with every check-in.",
+    "Lush plant-covered indoor greenhouse ambiance."
+  ],
+  isSponsored: true
+};
 
 export default function ResultsPage({ 
   selectedMood,
@@ -11,7 +32,9 @@ export default function ResultsPage({
   favorites,
   onToggleFavorite,
   onOpenSOS,
-  userLocation
+  userLocation,
+  onOpenAuth,
+  user
 }) {
   const navigate = useNavigate();
   const mapRef = useRef(null);
@@ -24,13 +47,16 @@ export default function ResultsPage({
   const [searchQuery, setSearchQuery] = useState('');
   const [isFetching, setIsFetching] = useState(false);
 
-  // 1. Fetch dynamic places based on selectors and user location
+  // 1. Fetch dynamic places based on selectors and user location with toasts
   useEffect(() => {
     const fetchData = async () => {
       const loc = internalUserLoc || userLocation;
       if (!loc) return;
 
       setIsFetching(true);
+      // Prevent spamming empty search query triggers
+      const toastId = toast.loading("Finding nearby hidden gems...");
+
       // Determine category based on mood or search query
       let category = 'all';
       if (searchQuery) category = searchQuery;
@@ -38,14 +64,28 @@ export default function ResultsPage({
       else if (selectedMood === 'Study/Work' || selectedMood === 'Peaceful') category = 'library';
       else if (selectedMood === 'Adventure' || selectedMood === 'Stress Relief') category = 'nature';
 
-      const results = await fetchNearbyPlaces(loc.lat, loc.lng, 5000, category);
-      if (results.length > 0) {
-        setFilteredPlaces(results);
-      } else {
-        // No dynamic results — show empty list so UI displays the 'no spots' state
+      try {
+        const results = await fetchNearbyPlaces(loc.lat, loc.lng, 5000, category);
+        if (results && results.length > 0) {
+          setFilteredPlaces(results);
+          toast.success(`Discovered ${results.length} amazing spots matching your vibe! 🗺️`, {
+            id: toastId,
+          });
+        } else {
+          setFilteredPlaces([]);
+          toast.info("No nearby spots matched this combination. Try a different mood!", {
+            id: toastId,
+          });
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
         setFilteredPlaces([]);
+        toast.error("Failed to load recommendations. Please verify network.", {
+          id: toastId,
+        });
+      } finally {
+        setIsFetching(false);
       }
-      setIsFetching(false);
     };
 
     fetchData();
@@ -259,6 +299,9 @@ export default function ResultsPage({
   };
 
   const getPlaceImage = (place) => {
+    if (place.isSponsored) {
+      return "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80";
+    }
     if (place.image && !place.image.includes('placeholder.com') && !place.image.includes('via.placeholder')) {
       return place.image;
     }
@@ -268,6 +311,104 @@ export default function ResultsPage({
   const getEmojiForCompanion = (comp) => {
     const list = { Solo: '🧍', Duet: '👫', Friends: '👥', Family: '👨‍👩‍👧' };
     return list[comp] || '👥';
+  };
+
+  const renderPlaceCard = (place, idx) => {
+    const isSaved = favorites.includes(place.id);
+    const isSponsored = place.isSponsored;
+    
+    return (
+      <div
+        key={place.id}
+        onClick={() => setSelectedPlace(place)}
+        style={{ animationDelay: `${idx * 0.05}s` }}
+        className={`rounded-xl border overflow-hidden shadow-sm hover:translate-y-[-3px] hover:shadow-md transition-all duration-300 cursor-pointer animate-fade-in-load flex flex-col justify-between ${
+          isSponsored 
+            ? 'bg-gradient-to-br from-amber-50/60 via-card to-primary-green/5 border-amber-300 shadow-md ring-1 ring-amber-300/20' 
+            : 'bg-card border-border'
+        }`}
+      >
+        <div>
+          <div 
+            className="h-32 bg-cover bg-center relative"
+            style={{ backgroundImage: `url('${isSponsored ? "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80" : getPlaceImage(place)}')` }}
+          >
+            {isSponsored ? (
+              <div className="absolute top-2 left-2 flex items-center gap-1">
+                <span className="bg-[#D4AF37] text-white text-[9px] font-bold py-1 px-2.5 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                  Sponsored 🏷️
+                </span>
+              </div>
+            ) : (
+              <span className="absolute top-2 left-2 bg-black/70 backdrop-blur-xs text-white text-[9px] font-bold py-1 px-2.5 rounded-full uppercase tracking-wider">
+                {place.category}
+              </span>
+            )}
+            
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFavorite(place.id, place.name);
+              }}
+              className="absolute top-2 right-2 bg-white/95 text-xs p-1.5 rounded-full shadow-sm"
+            >
+              {isSaved ? '❤️' : '🤍'}
+            </button>
+          </div>
+
+          <div className="p-4 pb-0">
+            {isSponsored && (
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[9px] font-extrabold uppercase tracking-widest text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded flex items-center gap-0.5">
+                  ⭐ Featured Place
+                </span>
+                
+                {/* Tooltip trigger */}
+                <div className="group relative cursor-pointer">
+                  <span className="text-[10px] text-text-secondary hover:text-text-primary">ℹ️</span>
+                  <div className="absolute right-0 bottom-full mb-1.5 hidden group-hover:block w-48 bg-black/90 text-white text-[9px] p-2 rounded-lg leading-normal shadow-lg z-50 pointer-events-none font-sans normal-case">
+                    Sponsored places are promoted listings and do not influence core recommendations.
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex justify-between items-start gap-1">
+              <h4 className="font-heading text-sm font-bold text-text-primary line-clamp-1">
+                {place.name}
+              </h4>
+              <span className="text-[10px] text-text-secondary font-bold whitespace-nowrap">
+                {place.distance}
+              </span>
+            </div>
+
+            <p className="text-[11px] text-text-secondary line-clamp-2 mt-1.5 leading-relaxed">
+              {place.description}
+            </p>
+          </div>
+        </div>
+
+        <div className="p-4 pt-2">
+          <div className="flex items-center gap-1.5">
+            <span className="text-yellow-500 text-xs">⭐</span>
+            <span className="text-[11px] font-bold text-text-primary">
+              {place.safetyRating}
+            </span>
+            <span className="text-[10px] text-text-secondary border-l border-border pl-1.5 font-bold">
+              Safety: {Math.round(place.safetyRating * 20)}%
+            </span>
+          </div>
+
+          <button className={`w-full mt-3 border font-heading text-xs font-bold py-2 rounded-lg transition ${
+            isSponsored 
+              ? 'border-amber-400 bg-amber-50/50 hover:bg-amber-100/50 text-amber-800' 
+              : 'border-border hover:bg-page text-primary-green'
+          }`}>
+            View Details ➔
+          </button>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -306,12 +447,19 @@ export default function ResultsPage({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* Active Selections display indicator */}
           <div className="hidden lg:flex gap-1">
             {selectedMood && <span className="bg-selected-bg text-primary-green text-[9px] font-bold px-2 py-0.5 rounded-full">{getEmojiForMood(selectedMood)} {selectedMood}</span>}
             {selectedCompanion && <span className="bg-selected-bg text-primary-green text-[9px] font-bold px-2 py-0.5 rounded-full">{getEmojiForCompanion(selectedCompanion)} {selectedCompanion}</span>}
           </div>
+          
+          <button 
+            onClick={onOpenAuth} 
+            className="text-text-primary hover:bg-page text-xs font-semibold border border-border bg-white px-3 py-1.5 rounded-lg transition"
+          >
+            {user ? `👤 ${user.name}` : '🔑 Login'}
+          </button>
         </div>
       </header>
 
@@ -339,75 +487,40 @@ export default function ResultsPage({
               <span className="text-primary-green animate-pulse">Loading amazing places...</span>
             </div>
           ) : filteredPlaces.length === 0 ? (
-            <div className="bg-white rounded-xl border border-border p-12 text-center max-w-md mx-auto my-6">
-              <span className="text-4xl block mb-2">🗺️</span>
-              <h4 className="font-heading font-bold text-sm">No spots matches criteria</h4>
-              <p className="text-xs text-text-secondary mt-1 max-w-xs mx-auto leading-relaxed">
-                Try clearing search terms or navigate back to adjust companion and time parameters.
-              </p>
-              <button 
-                onClick={() => { setSearchQuery(''); navigate('/selector'); }}
-                className="mt-4 bg-primary-green text-white text-xs font-bold py-2 px-6 rounded-lg shadow-sm"
-              >
-                Reset Filters
-              </button>
+            <div className="flex flex-col items-center pb-20">
+              <div className="bg-white rounded-xl border border-border p-12 text-center max-w-md mx-auto my-6 w-full">
+                <span className="text-4xl block mb-2">🗺️</span>
+                <h4 className="font-heading font-bold text-sm">No spots matches criteria</h4>
+                <p className="text-xs text-text-secondary mt-1 max-w-xs mx-auto leading-relaxed">
+                  Try clearing search terms or navigate back to adjust companion and time parameters.
+                </p>
+                <button 
+                  onClick={() => { setSearchQuery(''); navigate('/selector'); }}
+                  className="mt-4 bg-primary-green text-white text-xs font-bold py-2 px-6 rounded-lg shadow-sm"
+                >
+                  Reset Filters
+                </button>
+              </div>
+              
+              <div className="w-full max-w-sm mt-4">
+                <h3 className="text-[10px] font-bold text-text-secondary uppercase tracking-widest mb-3 text-center">✨ Featured Partnership</h3>
+                {renderPlaceCard(sponsoredPlace, 0)}
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-20">
-              {filteredPlaces.map((place, idx) => {
-                const isSaved = favorites.includes(place.id);
-                return (
-                  <div
-                    key={place.id}
-                    onClick={() => setSelectedPlace(place)}
-                    style={{ animationDelay: `${idx * 0.05}s` }}
-                    className="bg-card rounded-xl border border-border overflow-hidden shadow-sm hover:translate-y-[-3px] hover:shadow-md transition-all duration-300 cursor-pointer animate-fade-in-load"
-                  >
-                    <div 
-                      className="h-32 bg-cover bg-center relative"
-                      style={{ backgroundImage: `url('${getPlaceImage(place)}')` }}
-                    >
-                      <span className="absolute top-2 left-2 bg-black/70 backdrop-blur-xs text-white text-[9px] font-bold py-1 px-2.5 rounded-full uppercase tracking-wider">
-                        {place.category}
-                      </span>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onToggleFavorite(place.id);
-                        }}
-                        className="absolute top-2 right-2 bg-white/95 text-xs p-1.5 rounded-full shadow-sm"
-                      >
-                        {isSaved ? '❤️' : '🤍'}
-                      </button>
-                    </div>
-
-                    <div className="p-4">
-                      <div className="flex justify-between items-start gap-1">
-                        <h4 className="font-heading text-sm font-bold text-text-primary line-clamp-1">
-                          {place.name}
-                        </h4>
-                        <span className="text-[10px] text-text-secondary font-bold whitespace-nowrap">
-                          {place.distance}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <span className="text-yellow-500 text-xs">⭐</span>
-                        <span className="text-[11px] font-bold text-text-primary">
-                          {place.safetyRating}
-                        </span>
-                        <span className="text-[10px] text-text-secondary border-l border-border pl-1.5 font-bold">
-                          Safety: {Math.round(place.safetyRating * 20)}%
-                        </span>
-                      </div>
-
-                      <button className="w-full mt-4 border border-border hover:bg-page text-primary-green font-heading text-xs font-bold py-2 rounded-lg transition">
-                        View Details ➔
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+              {(() => {
+                const cards = [];
+                filteredPlaces.forEach((place, idx) => {
+                  cards.push(renderPlaceCard(place, idx));
+                  
+                  // Insert the sponsored card EXACTLY at index 1 (between first and second recommendation cards)
+                  if (idx === 0) {
+                    cards.push(renderPlaceCard(sponsoredPlace, 999));
+                  }
+                });
+                return cards;
+              })()}
             </div>
           )}
         </section>
@@ -450,7 +563,7 @@ export default function ResultsPage({
                   ⬅️ Back
                 </button>
                 <button 
-                  onClick={() => onToggleFavorite(selectedPlace.id)}
+                  onClick={() => onToggleFavorite(selectedPlace.id, selectedPlace.name)}
                   className={`absolute top-4 right-16 bg-white border text-xs font-bold px-3 py-1.5 rounded-full shadow transition z-10 ${
                     favorites.includes(selectedPlace.id) ? 'bg-sos-bg text-sos-red border-sos-border' : 'text-text-primary'
                   }`}
@@ -476,6 +589,17 @@ export default function ResultsPage({
 
               {/* Drawer Body Scroll */}
               <div className="flex-1 overflow-y-auto p-5 no-scrollbar">
+                
+                {selectedPlace.isSponsored && (
+                  <div className="bg-gradient-to-r from-amber-500/10 to-amber-600/5 border border-amber-300 rounded-xl p-3.5 shadow-xs mb-5 flex items-center justify-between animate-fade-in-load">
+                    <span className="text-xs font-bold text-amber-800 flex items-center gap-1">
+                      ✨ Promoted Partner Spot
+                    </span>
+                    <span className="text-[10px] text-amber-700 italic font-medium">
+                      Transparent partner listing
+                    </span>
+                  </div>
+                )}
                 
                 {/* Rating row */}
                 <div className="flex justify-between items-center bg-page border border-border rounded-xl p-3.5 shadow-xs mb-5">

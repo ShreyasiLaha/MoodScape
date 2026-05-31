@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 
 export default function SOSModal({ isOpen, onClose }) {
   const [countdown, setCountdown] = useState(3);
@@ -46,6 +47,13 @@ export default function SOSModal({ isOpen, onClose }) {
         );
       }
 
+      // Trigger high priority warning toast for active countdown
+      toast.warning("🚨 SOS Countdown Activated!", {
+        id: "sos-alert",
+        duration: 3000,
+        description: "Emergency dispatch will trigger in 3 seconds.",
+      });
+
       // Start countdown
       timerRef.current = setInterval(() => {
         setCountdown((prev) => {
@@ -67,6 +75,11 @@ export default function SOSModal({ isOpen, onClose }) {
   const sendAlert = () => {
     clearInterval(timerRef.current);
     setIsSent(true);
+    toast.error("📢 SOS Dispatched!", {
+      id: "sos-alert",
+      duration: 7000,
+      description: "Emergency contacts have been notified with coordinates.",
+    });
   };
 
   const handleCancel = () => {
@@ -74,8 +87,14 @@ export default function SOSModal({ isOpen, onClose }) {
     if (savedPin) {
       clearInterval(timerRef.current);
       setPinPrompt(true);
+      toast.info("Please enter your PIN to cancel the SOS dispatch.", {
+        id: "sos-alert",
+      });
     } else {
       clearInterval(timerRef.current);
+      toast.success("SOS cancelled. You are safe! ✅", {
+        id: "sos-alert",
+      });
       onClose();
     }
   };
@@ -84,11 +103,14 @@ export default function SOSModal({ isOpen, onClose }) {
     e.preventDefault();
     const savedPin = localStorage.getItem('sos_pin');
     if (inputPin === savedPin) {
+      toast.success("SOS cancelled. You are safe! ✅", {
+        id: "sos-alert",
+      });
       onClose();
     } else {
-      alert('Incorrect PIN!');
-      // Resume countdown if they got it wrong? Or just leave it paused?
-      // Let's just leave it paused and wait for correct PIN or let them send.
+      toast.error("Incorrect PIN! Emergency alert is still active.", {
+        id: "sos-pin-error",
+      });
     }
   };
 

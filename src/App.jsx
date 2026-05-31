@@ -6,6 +6,9 @@ import ResultsPage from './pages/ResultsPage';
 import SettingsModal from './components/SettingsModal';
 import SOSModal from './components/SOSModal';
 import FeedbackModal from './components/FeedbackModal';
+import AuthModal from './components/AuthModal';
+import AIChatbot from './components/AIChatbot';
+import { Toaster, toast } from 'sonner';
 
 export default function App() {
   const [selectedMood, setSelectedMood] = useState(null);
@@ -17,15 +20,27 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSOSOpen, setIsSOSOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem('auth_user') || 'null')
+  );
   const [userLocation, setUserLocation] = useState(null); // null means not set, will prompt
 
-  // Sync favorites count
-  const handleToggleFavorite = (placeId) => {
+  // Sync favorites count with modern toasts
+  const handleToggleFavorite = (placeId, placeName) => {
     let updated;
+    const isAdding = !favorites.includes(placeId);
     if (favorites.includes(placeId)) {
       updated = favorites.filter(id => id !== placeId);
+      toast.info(`Removed "${placeName || 'spot'}" from favorites`, {
+        id: `fav-${placeId}`,
+      });
     } else {
       updated = [...favorites, placeId];
+      toast.success(`Added "${placeName || 'spot'}" to favorites!`, {
+        id: `fav-${placeId}`,
+        icon: '❤️',
+      });
     }
     setFavorites(updated);
     localStorage.setItem('explorer_favorites', JSON.stringify(updated));
@@ -35,6 +50,22 @@ export default function App() {
     <Router>
       <div className="w-full h-full relative font-body select-none">
         
+        {/* Global Toaster for clean Sonner notifications */}
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 3500,
+            style: {
+              background: '#ffffff',
+              color: '#111111',
+              border: '1px solid #e0e0e0',
+              fontFamily: "'Inter', sans-serif",
+              borderRadius: '12px',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+            },
+          }}
+        />
+
         {/* Main Routes */}
         <Routes>
           <Route 
@@ -45,6 +76,8 @@ export default function App() {
                 onOpenSOS={() => setIsSOSOpen(true)}
                 onOpenFeedback={() => setIsFeedbackOpen(true)}
                 favoritesCount={favorites.length}
+                onOpenAuth={() => setIsAuthOpen(true)}
+                user={user}
               />
             } 
           />
@@ -75,6 +108,8 @@ export default function App() {
                 onToggleFavorite={handleToggleFavorite}
                 onOpenSOS={() => setIsSOSOpen(true)}
                 userLocation={userLocation}
+                onOpenAuth={() => setIsAuthOpen(true)}
+                user={user}
               />
             } 
           />
@@ -88,6 +123,9 @@ export default function App() {
         >
           🚨
         </button>
+
+        {/* Global chatbot float in the bottom left */}
+        <AIChatbot />
 
         {/* Modals overlays */}
         <SettingsModal 
@@ -103,6 +141,12 @@ export default function App() {
         <FeedbackModal 
           isOpen={isFeedbackOpen} 
           onClose={() => setIsFeedbackOpen(false)} 
+        />
+
+        <AuthModal 
+          isOpen={isAuthOpen} 
+          onClose={() => setIsAuthOpen(false)} 
+          onAuthSuccess={setUser}
         />
 
       </div>

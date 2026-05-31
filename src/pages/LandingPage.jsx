@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoIcon from '../logo_icon.png';
 
-export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback, favoritesCount }) {
+export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback, favoritesCount, onOpenAuth, user }) {
   const navigate = useNavigate();
   const [animate, setAnimate] = useState(false);
 
@@ -34,7 +34,7 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
           className="absolute inset-0 w-full h-full object-cover"
         />
       </video>
-
+ 
       {/* Cinematic atmospheric fog & gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/25 to-black/35 z-10"></div>
       
@@ -45,7 +45,7 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
           background: "radial-gradient(circle at 50% 60%, rgba(82, 183, 136, 0.15), transparent 75%)"
         }}
       ></div>
-
+ 
       {/* Transparent Navbar */}
       <header className="absolute top-0 left-0 w-full h-16 px-6 flex justify-between items-center z-30 bg-transparent">
         <div className="flex items-center gap-3">
@@ -66,6 +66,13 @@ export default function LandingPage({ onOpenSettings, onOpenSOS, onOpenFeedback,
             ❤️ Saved <span className="bg-primary-green text-white text-[9px] px-1.5 py-0.5 rounded-full">{favoritesCount}</span>
           </button>
           
+          <button 
+            onClick={onOpenAuth} 
+            className="text-white hover:text-white/80 text-xs font-semibold border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg transition"
+          >
+            {user ? `👤 ${user.name}` : '🔑 Login'}
+          </button>
+
           <button 
             onClick={onOpenSettings} 
             className="text-white hover:text-white/80 text-xs font-semibold border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg transition"
